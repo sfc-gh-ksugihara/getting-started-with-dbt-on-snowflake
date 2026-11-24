@@ -38,7 +38,11 @@ JOIN {{ ref('raw_pos_truck') }} t
     ON oh.truck_id = t.truck_id
 JOIN {{ ref('raw_pos_menu') }} m
     ON od.menu_item_id = m.menu_item_id
-JOIN {{ ref('raw_pos_franchise') }} f
+-- FRANCHISE repeats some FRANCHISE_IDs, so dedupe to one row per franchise before joining
+JOIN (
+    SELECT DISTINCT franchise_id, first_name, last_name
+    FROM {{ ref('raw_pos_franchise') }}
+) f
     ON t.franchise_id = f.franchise_id
 JOIN {{ ref('raw_pos_location') }} l
     ON oh.location_id = l.location_id

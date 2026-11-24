@@ -1,0 +1,209 @@
+version: 2
+# Staging models are pass-through views (SELECT * FROM source), so their columns
+# match the RAW tables exactly. Data tests are defined on the sources in
+# __sources.yml; repeating them here would run the same checks twice. Add tests
+# here once a model starts to rename, cast, filter or deduplicate columns.
+models:
+- name: raw_pos_country
+  description: 'Country and city reference data. Pass-through view of source tb_101.COUNTRY.'
+  columns:
+  - name: COUNTRY_ID
+    description: 'Country identifier'
+  - name: COUNTRY
+    description: 'Country name'
+  - name: ISO_CURRENCY
+    description: 'ISO currency code'
+  - name: ISO_COUNTRY
+    description: 'ISO country code'
+  - name: CITY_ID
+    description: 'City identifier'
+  - name: CITY
+    description: 'City name'
+  - name: CITY_POPULATION
+    description: 'City population count'
+
+- name: raw_pos_franchise
+  description: 'Franchise ownership data. Pass-through view of source tb_101.FRANCHISE.'
+  columns:
+  - name: FRANCHISE_ID
+    description: 'Primary key for franchises'
+  - name: FIRST_NAME
+    description: 'Franchise owner first name'
+  - name: LAST_NAME
+    description: 'Franchise owner last name'
+  - name: CITY
+    description: 'City where franchise is based'
+  - name: COUNTRY
+    description: 'Country where franchise is based'
+  - name: E_MAIL
+    description: 'Contact email'
+  - name: PHONE_NUMBER
+    description: 'Contact phone number'
+
+- name: raw_pos_location
+  description: 'Business locations, one row per location. Pass-through view of source tb_101.LOCATION.'
+  columns:
+  - name: LOCATION_ID
+    description: 'Primary key for locations'
+  - name: PLACEKEY
+    description: 'Standard location identifier'
+  - name: LOCATION
+    description: 'Location name'
+  - name: CITY
+    description: 'City name'
+  - name: REGION
+    description: 'Regional identifier'
+  - name: ISO_COUNTRY_CODE
+    description: 'ISO country code'
+  - name: COUNTRY
+    description: 'Country name'
+
+- name: raw_pos_menu
+  description: 'Food menu items, one row per menu item. Pass-through view of source tb_101.MENU.'
+  columns:
+  - name: MENU_ID
+    description: 'Primary key for menu items'
+  - name: MENU_TYPE_ID
+    description: 'Menu type reference'
+  - name: MENU_TYPE
+    description: 'Type of menu'
+  - name: TRUCK_BRAND_NAME
+    description: 'Brand name for truck'
+  - name: MENU_ITEM_ID
+    description: 'Item identifier on menu'
+  - name: MENU_ITEM_NAME
+    description: 'Name of menu item'
+  - name: ITEM_CATEGORY
+    description: 'Category of food item'
+  - name: ITEM_SUBCATEGORY
+    description: 'Subcategory of food item'
+  - name: COST_OF_GOODS_USD
+    description: 'Cost to prepare item'
+  - name: SALE_PRICE_USD
+    description: 'Retail price of item'
+  - name: MENU_ITEM_HEALTH_METRICS_OBJ
+    description: 'Health metrics for menu item'
+
+- name: raw_pos_truck
+  description: 'Food trucks, one row per truck. Pass-through view of source tb_101.TRUCK.'
+  columns:
+  - name: TRUCK_ID
+    description: 'Primary key for trucks'
+  - name: MENU_TYPE_ID
+    description: 'Type of menu on truck'
+  - name: PRIMARY_CITY
+    description: 'Main city for truck'
+  - name: REGION
+    description: 'Region where truck operates'
+  - name: ISO_REGION
+    description: 'ISO region code'
+  - name: COUNTRY
+    description: 'Country where truck operates'
+  - name: ISO_COUNTRY_CODE
+    description: 'ISO country code'
+  - name: FRANCHISE_FLAG
+    description: 'Whether truck is franchised'
+  - name: YEAR
+    description: 'Year of truck manufacture'
+  - name: MAKE
+    description: 'Truck manufacturer'
+  - name: MODEL
+    description: 'Truck model'
+  - name: EV_FLAG
+    description: 'Whether truck is electric'
+  - name: FRANCHISE_ID
+    description: 'Foreign key to franchise'
+  - name: TRUCK_OPENING_DATE
+    description: 'Date truck began operations'
+
+- name: raw_pos_order_header
+  description: 'Order header information. Pass-through view of source tb_101.ORDER_HEADER.'
+  columns:
+  - name: ORDER_ID
+    description: 'Primary key for orders'
+  - name: TRUCK_ID
+    description: 'Foreign key to truck'
+  - name: LOCATION_ID
+    description: 'Foreign key to location'
+  - name: CUSTOMER_ID
+    description: 'Customer identifier'
+  - name: DISCOUNT_ID
+    description: 'Discount applied to order'
+  - name: SHIFT_ID
+    description: 'Shift identifier'
+  - name: SHIFT_START_TIME
+    description: 'Shift start time'
+  - name: SHIFT_END_TIME
+    description: 'Shift end time'
+  - name: ORDER_CHANNEL
+    description: 'Order channel (app, in-person)'
+  - name: ORDER_TS
+    description: 'Order timestamp'
+  - name: SERVED_TS
+    description: 'Time order was served'
+  - name: ORDER_CURRENCY
+    description: 'Currency of the order'
+  - name: ORDER_AMOUNT
+    description: 'Pre-tax order amount'
+  - name: ORDER_TAX_AMOUNT
+    description: 'Tax amount'
+  - name: ORDER_DISCOUNT_AMOUNT
+    description: 'Discount amount'
+  - name: ORDER_TOTAL
+    description: 'Total order amount'
+
+- name: raw_pos_order_detail
+  description: 'Order line item details. Pass-through view of source tb_101.ORDER_DETAIL.'
+  columns:
+  - name: ORDER_DETAIL_ID
+    description: 'Primary key for order details'
+  - name: ORDER_ID
+    description: 'Foreign key to order header'
+  - name: MENU_ITEM_ID
+    description: 'Foreign key to menu'
+  - name: DISCOUNT_ID
+    description: 'Optional discount applied'
+  - name: LINE_NUMBER
+    description: 'Line number on order'
+  - name: QUANTITY
+    description: 'Quantity ordered'
+  - name: UNIT_PRICE
+    description: 'Price per unit'
+  - name: PRICE
+    description: 'Total line price'
+  - name: ORDER_ITEM_DISCOUNT_AMOUNT
+    description: 'Discount amount for line'
+
+- name: raw_customer_customer_loyalty
+  description: 'Loyalty program members. Pass-through view of source tb_101.CUSTOMER_LOYALTY.'
+  columns:
+  - name: CUSTOMER_ID
+    description: 'Loyalty customer identifier'
+  - name: FIRST_NAME
+    description: 'Customer first name'
+  - name: LAST_NAME
+    description: 'Customer last name'
+  - name: CITY
+    description: 'Customer city'
+  - name: COUNTRY
+    description: 'Customer country'
+  - name: POSTAL_CODE
+    description: 'Customer postal code'
+  - name: PREFERRED_LANGUAGE
+    description: 'Customer preferred language'
+  - name: GENDER
+    description: 'Customer gender'
+  - name: FAVOURITE_BRAND
+    description: 'Customer favourite truck brand'
+  - name: MARITAL_STATUS
+    description: 'Customer marital status'
+  - name: CHILDREN_COUNT
+    description: 'Number of children of the customer'
+  - name: SIGN_UP_DATE
+    description: 'Date the customer joined the loyalty program'
+  - name: BIRTHDAY_DATE
+    description: 'Customer birthday'
+  - name: E_MAIL
+    description: 'Customer email'
+  - name: PHONE_NUMBER
+    description: 'Customer phone number'

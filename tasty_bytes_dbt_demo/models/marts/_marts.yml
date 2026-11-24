@@ -1,0 +1,138 @@
+version: 2
+models:
+- name: orders
+  description: 'One row per order line item, joined with order header, truck, menu, franchise, location and customer loyalty data. Header-level amounts (ORDER_AMOUNT, ORDER_TOTAL, etc.) repeat on every line of the same order.'
+  columns:
+  - name: ORDER_ID
+    description: 'Order identifier'
+    data_tests:
+      - not_null
+  - name: TRUCK_ID
+    description: 'Truck that took the order'
+    data_tests:
+      - not_null
+  - name: ORDER_TS
+    description: 'Order timestamp'
+    data_tests:
+      - not_null
+  - name: ORDER_DETAIL_ID
+    description: 'Primary key for order line items'
+    data_tests:
+      - unique
+      - not_null
+  - name: LINE_NUMBER
+    description: 'Line number on order'
+  - name: TRUCK_BRAND_NAME
+    description: 'Brand name for truck'
+  - name: MENU_TYPE
+    description: 'Type of menu'
+  - name: PRIMARY_CITY
+    description: 'Main city for truck'
+  - name: REGION
+    description: 'Region where truck operates'
+  - name: COUNTRY
+    description: 'Country where truck operates'
+  - name: FRANCHISE_FLAG
+    description: 'Whether truck is franchised'
+  - name: FRANCHISE_ID
+    description: 'Franchise that owns the truck'
+  - name: FRANCHISEE_FIRST_NAME
+    description: 'Franchise owner first name'
+  - name: FRANCHISEE_LAST_NAME
+    description: 'Franchise owner last name'
+  - name: LOCATION_ID
+    description: 'Location where the order was placed'
+    data_tests:
+      - not_null
+  - name: CUSTOMER_ID
+    description: 'Loyalty customer identifier (null for non-member orders)'
+  - name: FIRST_NAME
+    description: 'Customer first name'
+  - name: LAST_NAME
+    description: 'Customer last name'
+  - name: E_MAIL
+    description: 'Customer email'
+  - name: PHONE_NUMBER
+    description: 'Customer phone number'
+  - name: CHILDREN_COUNT
+    description: 'Number of children of the customer'
+  - name: GENDER
+    description: 'Customer gender'
+  - name: MARITAL_STATUS
+    description: 'Customer marital status'
+  - name: MENU_ITEM_ID
+    description: 'Menu item ordered'
+    data_tests:
+      - not_null
+  - name: MENU_ITEM_NAME
+    description: 'Name of menu item'
+  - name: QUANTITY
+    description: 'Quantity ordered'
+  - name: UNIT_PRICE
+    description: 'Price per unit'
+  - name: PRICE
+    description: 'Total line price'
+  - name: ORDER_AMOUNT
+    description: 'Pre-tax order amount (header level)'
+  - name: ORDER_TAX_AMOUNT
+    description: 'Tax amount (header level)'
+  - name: ORDER_DISCOUNT_AMOUNT
+    description: 'Discount amount (header level)'
+  - name: ORDER_TOTAL
+    description: 'Total order amount (header level)'
+    data_tests:
+      - not_null
+
+- name: customer_loyalty_metrics
+  description: 'One row per loyalty customer who has placed at least one order, with total sales and the locations they visited.'
+  columns:
+  - name: CUSTOMER_ID
+    description: 'Primary key for loyalty customers'
+    data_tests:
+      - unique
+      - not_null
+  - name: CITY
+    description: 'Customer city'
+  - name: COUNTRY
+    description: 'Customer country'
+  - name: FIRST_NAME
+    description: 'Customer first name'
+  - name: LAST_NAME
+    description: 'Customer last name'
+  - name: PHONE_NUMBER
+    description: 'Customer phone number'
+  - name: E_MAIL
+    description: 'Customer email'
+  - name: TOTAL_SALES
+    description: 'Sum of ORDER_TOTAL across the customer''s orders'
+    data_tests:
+      - not_null
+  - name: VISITED_LOCATION_IDS_ARRAY
+    description: 'Distinct location IDs where the customer placed orders'
+
+- name: sales_metrics_by_location
+  description: 'One row per location in a city served by at least one truck, with truck count and sales totals. Python (Snowpark) model.'
+  columns:
+  - name: LOCATION_ID
+    description: 'Primary key for locations'
+    data_tests:
+      - unique
+      - not_null
+  - name: LOCATION
+    description: 'Location name'
+  - name: CITY
+    description: 'City name'
+  - name: TRUCK_COUNT
+    description: 'Number of trucks whose primary city matches the location city'
+    data_tests:
+      - not_null
+  - name: TOTAL_SALES
+    description: 'Sum of ORDER_TOTAL at the location (0 if no orders)'
+    data_tests:
+      - not_null
+  - name: TOTAL_AMOUNT
+    description: 'Sum of pre-tax ORDER_AMOUNT at the location (0 if no orders)'
+  - name: TOTAL_TAX
+    description: 'Sum of ORDER_TAX_AMOUNT at the location (0 if no orders)'
+  - name: LOCATION_DESCRIPTION
+    description: 'City name followed by truck count, e.g. "<CITY> (Trucks: <TRUCK_COUNT>)"'
